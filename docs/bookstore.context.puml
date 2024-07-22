@@ -1,0 +1,44 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+!define FONTAWESOME https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/font-awesome-5
+' uncomment the following line and comment the first to use locally
+' !include C4_Context.puml
+!include FONTAWESOME/envelope.puml
+
+LAYOUT_WITH_LEGEND()
+SHOW_PERSON_OUTLINE()
+
+title BookStore System Context Diagram
+
+Person(public_user, "Public User", "Book Searcher")
+Person(authorized_user, "Authorized User", "Bookstore members")
+Person(internal_user, "Internal User", "Administrator")
+
+Lay_R(public_user, authorized_user)
+Lay_R(authorized_user, internal_user)
+
+System_Ext(ips, "Identity Provider System", "Authentication and Authorization")
+
+Rel_R(authorized_user, ips, "Login", "OAuth2")
+Rel_R(internal_user, ips, "Login", "OAuth2")
+
+System_Ext(publisher, "Publisher System", "Book details publisher system")
+System_Ext(shipping_service, "Shipping Service", "Book Delivery")
+
+Enterprise_Boundary(bookstore_boundary, "Bookstore") {
+    Lay_L(bookstore_boundary, publisher)
+    System(bookstore, "Bookstore System", "Bookstore")
+    Rel_R(publisher, bookstore, "Publish Book details", "HTTPS/Webhook")
+    Rel_R(bookstore, ips, "Authen/Author", "OAuth2")    
+    Rel_D(public_user, bookstore, "query books", "RESTful")
+    Rel_D(authorized_user, bookstore, "query/purchase/online reading", "RESTful")
+    Rel_D(internal_user, bookstore, "manage", "RESTful")
+    Rel_D(bookstore, shipping_service, "deliver books", "RESTful")
+}
+
+Rel_U(shipping_service, authorized_user, "deliver books")
+
+Lay_D(bookstore_boundary, shipping_service)
+
+
+@enduml
