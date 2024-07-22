@@ -20,3 +20,10 @@ Using the C4 model to document Bookstore system
 
 ## Bookstore CICD
 
+### CICD Steps 
+
+![CICD Steps](./images/cicd.activities.png)
+
+### CICD Workflow
+
+![CICD Steps](./images/cicd.sequence-diagram.png)
